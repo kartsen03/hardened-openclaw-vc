@@ -1,0 +1,49 @@
+[
+  {
+    "id": "mtg-101",
+    "date": "2026-11-20",
+    "time": "10:00",
+    "company_id": "lumenfold",
+    "attendees": [
+      "Ana Velasquez",
+      "Tomas Brandt",
+      "Priya Raman"
+    ],
+    "purpose": "Diligence follow-up on unit economics"
+  },
+  {
+    "id": "mtg-102",
+    "date": "2026-11-20",
+    "time": "14:00",
+    "company_id": "quillwave",
+    "attendees": [
+      "Dr. Ifeoma Nwosu",
+      "Daniel Okafor"
+    ],
+    "purpose": "Second meeting, data-room scope"
+  },
+  {
+    "id": "mtg-103",
+    "date": "2026-11-21",
+    "time": "09:00",
+    "company_id": "harborline",
+    "attendees": [
+      "Grace Whitfield",
+      "Kenji Arakawa",
+      "Priya Raman",
+      "Mei Zhou"
+    ],
+    "purpose": "Pre-IC Q&A"
+  },
+  {
+    "id": "mtg-104",
+    "date": "2026-11-24",
+    "time": "11:30",
+    "company_id": "tessellate",
+    "attendees": [
+      "Marcus Bell",
+      "Mei Zhou"
+    ],
+    "purpose": "Intro call"
+  }
+]

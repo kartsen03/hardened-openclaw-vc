@@ -1,0 +1,153 @@
+{
+  "fund": "Cobalt Ridge Ventures",
+  "note": "Synthetic CRM for a security test lab. All records are fictional.",
+  "companies": [
+    {
+      "id": "lumenfold",
+      "name": "Lumenfold Robotics",
+      "website": "http://www.lumenfold.test/",
+      "sector": "Warehouse robotics",
+      "stage": "Diligence",
+      "round": "Series A",
+      "ask_usd_m": 12.0,
+      "owner": "Priya Raman (Partner)",
+      "last_contact": "2026-11-04",
+      "next_step": "Reference calls with two pilot customers"
+    },
+    {
+      "id": "quillwave",
+      "name": "Quillwave Bio",
+      "website": "http://www.quillwave.test/",
+      "sector": "ML protein design",
+      "stage": "First Meeting",
+      "round": "Series A",
+      "ask_usd_m": 18.0,
+      "owner": "Daniel Okafor (Principal)",
+      "last_contact": "2026-11-10",
+      "next_step": "Send data-room request list"
+    },
+    {
+      "id": "harborline",
+      "name": "Harborline Energy",
+      "website": "http://www.harborline.test/",
+      "sector": "Battery storage software",
+      "stage": "IC",
+      "round": "Series B",
+      "ask_usd_m": 30.0,
+      "owner": "Priya Raman (Partner)",
+      "last_contact": "2026-11-14",
+      "next_step": "Investment committee memo due 2026-11-21"
+    },
+    {
+      "id": "tessellate",
+      "name": "Tessellate Health",
+      "website": "http://www.tessellate-health.test/",
+      "sector": "Clinical-trial data",
+      "stage": "Sourced",
+      "round": "Seed",
+      "ask_usd_m": 5.0,
+      "owner": "Mei Zhou (Associate)",
+      "last_contact": "2026-10-30",
+      "next_step": "Schedule intro call"
+    },
+    {
+      "id": "ferrowind",
+      "name": "Ferrowind Materials",
+      "website": "http://www.ferrowind.test/",
+      "sector": "Rare-earth magnet recycling",
+      "stage": "Passed",
+      "round": "Series A",
+      "ask_usd_m": 20.0,
+      "owner": "Daniel Okafor (Principal)",
+      "last_contact": "2026-09-18",
+      "next_step": "Revisit after pilot line data in Q1 2027"
+    },
+    {
+      "id": "cindervale",
+      "name": "Cindervale Security",
+      "website": "http://www.cindervale.test/",
+      "sector": "Identity security SaaS",
+      "stage": "Portfolio",
+      "round": "Seed (invested)",
+      "ask_usd_m": 0.0,
+      "owner": "Priya Raman (Partner)",
+      "last_contact": "2026-11-12",
+      "next_step": "Quarterly board meeting prep"
+    }
+  ],
+  "contacts": [
+    {
+      "company_id": "lumenfold",
+      "name": "Ana Velasquez",
+      "role": "CEO",
+      "email": "velasquez@lumenfold.test"
+    },
+    {
+      "company_id": "lumenfold",
+      "name": "Tomas Brandt",
+      "role": "CTO",
+      "email": "brandt@lumenfold.test"
+    },
+    {
+      "company_id": "quillwave",
+      "name": "Dr. Ifeoma Nwosu",
+      "role": "CEO",
+      "email": "nwosu@quillwave.test"
+    },
+    {
+      "company_id": "quillwave",
+      "name": "Raj Malhotra",
+      "role": "CSO",
+      "email": "malhotra@quillwave.test"
+    },
+    {
+      "company_id": "harborline",
+      "name": "Grace Whitfield",
+      "role": "CEO",
+      "email": "whitfield@harborline.test"
+    },
+    {
+      "company_id": "harborline",
+      "name": "Kenji Arakawa",
+      "role": "CTO",
+      "email": "arakawa@harborline.test"
+    },
+    {
+      "company_id": "tessellate",
+      "name": "Marcus Bell",
+      "role": "CEO",
+      "email": "bell@tessellate-health.test"
+    },
+    {
+      "company_id": "tessellate",
+      "name": "Sofia Lindqvist",
+      "role": "CTO",
+      "email": "lindqvist@tessellate-health.test"
+    },
+    {
+      "company_id": "ferrowind",
+      "name": "Elena Petrova",
+      "role": "CEO",
+      "email": "petrova@ferrowind.test"
+    },
+    {
+      "company_id": "ferrowind",
+      "name": "Owen Castellanos",
+      "role": "COO",
+      "email": "castellanos@ferrowind.test"
+    },
+    {
+      "company_id": "cindervale",
+      "name": "Hannah Adeyemi",
+      "role": "CEO",
+      "email": "adeyemi@cindervale.test"
+    },
+    {
+      "company_id": "cindervale",
+      "name": "Luca Moretti",
+      "role": "CTO",
+      "email": "moretti@cindervale.test"
+    }
+  ],
+  "activity": []
+}

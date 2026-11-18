@@ -1,0 +1,194 @@
+[
+  {
+    "id": "lumenfold",
+    "name": "Lumenfold Robotics",
+    "domain": "www.lumenfold.test",
+    "sector": "Warehouse robotics",
+    "hq": "Pittsburgh, PA",
+    "founded": 2023,
+    "founders": [
+      {
+        "name": "Ana Velasquez",
+        "role": "CEO",
+        "bio": "Previously led picking-systems engineering at a fictional 3PL, Northbay Logistics."
+      },
+      {
+        "name": "Tomas Brandt",
+        "role": "CTO",
+        "bio": "PhD in grasp planning; built the perception stack for the Lumenfold Picker."
+      }
+    ],
+    "facts": {
+      "product": "The Lumenfold Picker is a mobile arm that picks mixed-SKU totes at 600 picks per hour in pilot sites.",
+      "customers": "Three paid pilots with regional grocery distributors, all signed in 2026.",
+      "team": "The company has 24 employees.",
+      "funding": "Raised a $3.1M seed round in 2024 led by a fictional fund, Granite Arc Capital."
+    },
+    "news": [
+      [
+        "2026-09-12",
+        "Lumenfold opens a second pilot site in Columbus, Ohio."
+      ]
+    ]
+  },
+  {
+    "id": "quillwave",
+    "name": "Quillwave Bio",
+    "domain": "www.quillwave.test",
+    "sector": "ML protein design",
+    "hq": "Cambridge, MA",
+    "founded": 2022,
+    "founders": [
+      {
+        "name": "Dr. Ifeoma Nwosu",
+        "role": "CEO",
+        "bio": "Former computational biology lead at a fictional biotech, Helix Arbor."
+      },
+      {
+        "name": "Raj Malhotra",
+        "role": "CSO",
+        "bio": "Protein engineer with 40 published variants in enzyme stability."
+      }
+    ],
+    "facts": {
+      "product": "Quillwave designs heat-stable industrial enzymes with a generative model trained on 2 million assay results.",
+      "customers": "One signed development partnership with a fictional detergent maker, Brightfold Home.",
+      "team": "The company has 17 employees, 11 of them scientists.",
+      "funding": "Raised a $6.5M seed round in 2023."
+    },
+    "news": [
+      [
+        "2026-10-02",
+        "Quillwave reports a 9-degree thermal stability gain in a partner enzyme."
+      ]
+    ]
+  },
+  {
+    "id": "harborline",
+    "name": "Harborline Energy",
+    "domain": "www.harborline.test",
+    "sector": "Battery storage software",
+    "hq": "Austin, TX",
+    "founded": 2021,
+    "founders": [
+      {
+        "name": "Grace Whitfield",
+        "role": "CEO",
+        "bio": "Ran trading operations at a fictional power marketer, Lonestar Grid Partners."
+      },
+      {
+        "name": "Kenji Arakawa",
+        "role": "CTO",
+        "bio": "Built battery degradation models for utility-scale storage."
+      }
+    ],
+    "facts": {
+      "product": "Harborline's dispatch software schedules grid batteries against market prices and cell-degradation cost.",
+      "customers": "Software manages 410 MWh of storage across 7 sites.",
+      "team": "The company has 38 employees.",
+      "funding": "Raised a $14M Series A in 2024."
+    },
+    "news": [
+      [
+        "2026-08-21",
+        "Harborline adds degradation-aware bidding for two new Texas sites."
+      ]
+    ]
+  },
+  {
+    "id": "tessellate",
+    "name": "Tessellate Health",
+    "domain": "www.tessellate-health.test",
+    "sector": "Clinical-trial data",
+    "hq": "Raleigh, NC",
+    "founded": 2024,
+    "founders": [
+      {
+        "name": "Marcus Bell",
+        "role": "CEO",
+        "bio": "Former clinical operations director at a fictional CRO, Meridian Trials."
+      },
+      {
+        "name": "Sofia Lindqvist",
+        "role": "CTO",
+        "bio": "Built EDC integrations for site-level trial data."
+      }
+    ],
+    "facts": {
+      "product": "Tessellate reconciles site EDC data with lab feeds and flags query backlogs before database lock.",
+      "customers": "Live with 4 mid-size sponsors across 31 active studies.",
+      "team": "The company has 12 employees.",
+      "funding": "Raised a $2.4M pre-seed round in 2025."
+    },
+    "news": [
+      [
+        "2026-10-28",
+        "Tessellate passes a fictional third-party SOC 2 Type I audit."
+      ]
+    ]
+  },
+  {
+    "id": "ferrowind",
+    "name": "Ferrowind Materials",
+    "domain": "www.ferrowind.test",
+    "sector": "Rare-earth magnet recycling",
+    "hq": "Duluth, MN",
+    "founded": 2022,
+    "founders": [
+      {
+        "name": "Elena Petrova",
+        "role": "CEO",
+        "bio": "Metallurgist; previously ran a fictional pilot smelter, North Shore Alloys."
+      },
+      {
+        "name": "Owen Castellanos",
+        "role": "COO",
+        "bio": "Scaled reverse-logistics programs for electronics recyclers."
+      }
+    ],
+    "facts": {
+      "product": "Ferrowind recovers neodymium magnets from retired wind turbines with a low-heat separation process.",
+      "customers": "Offtake letter of intent for 120 tonnes per year with a fictional motor maker, Arcwell Drives.",
+      "team": "The company has 29 employees.",
+      "funding": "Raised a $9M seed round in 2024 including a state grant."
+    },
+    "news": [
+      [
+        "2026-07-15",
+        "Ferrowind commissions its first 40-tonne pilot line."
+      ]
+    ]
+  },
+  {
+    "id": "cindervale",
+    "name": "Cindervale Security",
+    "domain": "www.cindervale.test",
+    "sector": "Identity security SaaS",
+    "hq": "Denver, CO",
+    "founded": 2023,
+    "founders": [
+      {
+        "name": "Hannah Adeyemi",
+        "role": "CEO",
+        "bio": "Former incident-response lead at a fictional MSSP, Watchpoint."
+      },
+      {
+        "name": "Luca Moretti",
+        "role": "CTO",
+        "bio": "Built OAuth token-abuse detection for SaaS platforms."
+      }
+    ],
+    "facts": {
+      "product": "Cindervale detects abused OAuth grants and dormant service accounts across SaaS tenants.",
+      "customers": "52 paying customers, mostly 200 to 2,000 employee companies.",
+      "team": "The company has 21 employees.",
+      "funding": "Raised a $4.2M seed round in 2024."
+    },
+    "news": [
+      [
+        "2026-10-19",
+        "Cindervale launches automatic revocation for stale OAuth grants."
+      ]
+    ]
+  }
+]

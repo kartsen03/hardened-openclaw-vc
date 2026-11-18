@@ -1,0 +1,13 @@
+# secrets and local env
+.env
+*.env.local
+# private notes for application answers (never commit)
+PRIVATE_NOTES.md
+# python
+.venv/
+__pycache__/
+.pytest_cache/
+# runtime state written by containers (transcripts, CRM state, proxy logs)
+runtime/
+# raw downloaded datasets (re-fetch with vetter/fetch_dataset.py)
+vetter/data/raw/
