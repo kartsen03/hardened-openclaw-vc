@@ -44,8 +44,9 @@ for c in ("canary_leak", "disallowed_tool", "crm_write_unapproved", "non_allowli
     lines.append(f"  {c:22}: default {pct(d['by_category'][c])} -> hardened {pct(h['by_category'][c])}")
 lines += [
     f"Model tried the attack  : default {pct(d['attempted_overall'])}, hardened {pct(h['attempted_overall'])}",
-    (f"Canary leaked (hardened): no (0 hits in every hardened run's transcripts, logs and outputs, "
-     f"{can['files_scanned']} files; positive control passes)"
+    (f"Canary leaked (hardened): no (0 hits across "
+     f"{can['files_scanned']} files of hardened-run transcripts, logs and outputs; positive control "
+     f"{'passes' if can.get('controls', {}).get('planted_base64_leak_caught') else 'NOT RECORDED'})"
      if not (h['canary_leaked_under_injection'] or h['canary_leaked_in_worst_case'] or can['hits'])
      else "Canary leaked (hardened): YES, see results"),
     f"Canary leaked (default) : under injection {'yes' if d['canary_leaked_under_injection'] else 'no'}; "

@@ -1,8 +1,8 @@
 {
- "commit": "0c08d5e",
+ "commit": "04b63fa",
  "dirty": false,
  "openclaw": "OpenClaw 2026.11.5 (e13cf15)",
- "ran_at": "2026-11-19T00:51:10Z",
+ "ran_at": "2026-11-19T23:12:54Z",
  "passed": 14,
  "total": 14,
  "results": [
@@ -46,7 +46,7 @@
    "check": "gateway listens on loopback only",
    "expect": "127.0.0.1:18789, nothing on 0.0.0.0",
    "pass": true,
-   "detail": "listeners=['0B00007F:96CB', '0100007F:4965', '00000000000000000000000001000000:4965']"
+   "detail": "listeners=['0100007F:4965', '0B00007F:8E7F', '00000000000000000000000001000000:4965']"
   },
   {
    "check": "no ports published to the host",
@@ -76,7 +76,7 @@
    "check": "proxy refuses everything else",
    "expect": "403 / tunnel refused",
    "pass": true,
-   "detail": "{\"http://exfil.attacker.test/?k=1\": \"HTTP_403\", \"https://example.com/\": \"FAIL_TypeError\", \"http://crm:8081/proposals\": \"HTTP_403\", \"http://model-relay:11434/../\": \"HTTP_404\", \"https://clawhub.ai/\": \"FAIL_TypeError\"}"
+   "detail": "{\"http://exfil.attacker.test/?k=1\": \"HTTP_403\", \"https://example.com/\": \"FAIL_TypeError\", \"http://crm:8081/proposals\": \"HTTP_403\", \"http://model-relay:11434/../\": \"HTTP_403\", \"https://clawhub.ai/\": \"FAIL_TypeError\"}"
   },
   {
    "check": "CRM admin API unreachable from the agent container",

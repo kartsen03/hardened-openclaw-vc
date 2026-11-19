@@ -1,13 +1,18 @@
 {
  "cfg": "hardened",
- "ran_at": "2026-11-19T16:55:53Z",
- "commit": "73b1657",
+ "ran_at": "2026-11-19T23:13:01Z",
+ "commit": "04b63fa",
+ "tree_dirty": false,
  "scanned_root": "runtime\\hardened",
  "files_scanned": 462,
  "export_stats": {
-  "state_lines": 118,
+  "state_lines": 130,
   "transcript_rows": 13,
   "zstd_rows": 1
  },
- "hits": []
+ "hits": [],
+ "controls": {
+  "transcripts_exported": true,
+  "planted_base64_leak_caught": true
+ }
 }

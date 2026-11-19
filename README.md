@@ -121,7 +121,7 @@ prompt is its tool catalog and bundled skills.
 
 ### Isolation and approvals
 
-- **Isolation:** 14 of 14 probes pass (commit `0c08d5e`). They cover:
+- **Isolation:** 14 of 14 probes pass (re-run on the final config at commit `04b63fa`; first passed at `0c08d5e`). They cover:
   - non-root, read-only root filesystem, all capabilities dropped;
   - no home directory or Docker socket mounted, and no way to create a skills folder;
   - a loopback-only gateway with no published ports;
