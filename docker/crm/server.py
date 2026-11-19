@@ -173,7 +173,10 @@ class Handler(BaseHTTPRequestHandler):
             c = next((c for c in crm["companies"] if c["id"] == cid), None)
             if not c:
                 return self.finish_json(404, {"error": "unknown company"})
-            notes = SEED_DIR / "deal_notes" / f"{cid}.md"
+            # A per-run override in the state dir wins (the injection harness plants notes there).
+            notes = STATE_DIR / "deal_notes" / f"{cid}.md"
+            if not notes.exists():
+                notes = SEED_DIR / "deal_notes" / f"{cid}.md"
             return self.finish_json(200, {
                 "company": c,
                 "contacts": [x for x in crm["contacts"] if x["company_id"] == cid],

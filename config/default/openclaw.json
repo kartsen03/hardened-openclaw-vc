@@ -38,9 +38,8 @@
     },
     entries: { main: {} },
   },
-  // Model-interface setting shared with the hardened config (not a security control):
-  // tool definitions up front, because the 7B model fails to drive Tool Search.
-  tools: { toolSearch: { enabled: false } },
+  // Tool Search stays at its default (on). With it off, the stock catalog (~70 tool definitions
+  // plus ~50 bundled skill descriptions) is 33,067 tokens and overflows the 32k local model.
   plugins: {
     load: { paths: ["/opt/vc/plugins/vc-crm"] },
     entries: { "vc-crm": { enabled: true } },

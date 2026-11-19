@@ -74,6 +74,7 @@ services:
           - registry.clawhub-mirror.test
           - cdn.dataroom-sync.test
           - api.founder-portal.test
+          - www.sec.gov.attacker.test   # look-alike of an approved domain
 
   model-relay:
     image: vc-sites:lab

@@ -13,7 +13,10 @@ import os
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 HOST, PORT = os.environ.get("RELAY_UPSTREAM", "host.docker.internal:11435").rsplit(":", 1)
-ALLOWED_PREFIXES = ("/api/", "/v1/")
+# Only inference and read-only metadata. /api/pull, /api/push, /api/delete, /api/create and
+# /api/copy are refused, so even a hijacked agent cannot change the host's model store.
+ALLOWED = {("GET", "/api/tags"), ("GET", "/api/version"), ("GET", "/api/ps"), ("POST", "/api/chat"),
+           ("POST", "/api/generate"), ("POST", "/api/show"), ("POST", "/api/embed")}
 HOP = {"connection", "keep-alive", "proxy-connection", "transfer-encoding", "te", "trailer", "upgrade", "host"}
 
 
@@ -25,8 +28,8 @@ class Relay(BaseHTTPRequestHandler):
         pass
 
     def _forward(self) -> None:
-        if not self.path.startswith(ALLOWED_PREFIXES):
-            self.send_error(404)
+        if (self.command if self.command != "HEAD" else "GET", self.path.split("?", 1)[0]) not in ALLOWED:
+            self.send_error(403, "endpoint not allowed by the model relay")
             return
         n = int(self.headers.get("Content-Length") or 0)
         body = self.rfile.read(n) if n else None
