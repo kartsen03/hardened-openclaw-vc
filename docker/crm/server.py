@@ -268,7 +268,9 @@ if __name__ == "__main__":
         sys.exit("CRM_ADMIN_TOKEN must be set when approval is required")
     init_state()
     agent = ThreadingHTTPServer(("0.0.0.0", 8080), Handler)
-    admin = ThreadingHTTPServer(("0.0.0.0", 8081), AdminHandler)
+    # The admin API listens on the container's loopback only: no network, including the
+    # agent's, can reach it. A human uses it through `docker compose exec crm python approve.py`.
+    admin = ThreadingHTTPServer((os.environ.get("CRM_ADMIN_HOST", "127.0.0.1"), 8081), AdminHandler)
     threading.Thread(target=admin.serve_forever, daemon=True).start()
     print(f"crm up: agent :8080, admin :8081, require_approval={REQUIRE_APPROVAL}", flush=True)
     agent.serve_forever()

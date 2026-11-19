@@ -28,16 +28,20 @@ def main() -> None:
             if "=" in line and not line.lstrip().startswith("#"):
                 k, v = line.split("=", 1)
                 current[k.strip()] = v.strip()
-    lines = []
+    lines, seen = [], set()
     for raw in (ROOT / ".env.example").read_text(encoding="utf-8").splitlines():
         if "=" in raw and not raw.lstrip().startswith("#"):
-            k = raw.split("=", 1)[0].strip()
-            v = current.get(k) if (current.get(k) and not rotate) else GENERATORS.get(k, lambda: "")()
+            k, example = (s.strip() for s in raw.split("=", 1))
+            seen.add(k)
+            if k in GENERATORS:
+                v = current[k] if (current.get(k) and not rotate) else GENERATORS[k]()
+            else:  # plain settings: keep the user's value, else the example default
+                v = current.get(k) or example
             lines.append(f"{k}={v}")
         else:
             lines.append(raw)
     for k, v in current.items():  # keep extra keys the user added (e.g. a hosted-model API key)
-        if k not in GENERATORS:
+        if k not in seen:
             lines.append(f"{k}={v}")
     ENV.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"wrote {ENV.name} with {sum(1 for k in GENERATORS)} generated values (not shown)")

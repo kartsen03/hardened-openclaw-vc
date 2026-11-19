@@ -1,0 +1,19 @@
+{
+  "agents": {
+    "researcher": ["web_fetch", "read", "write", "skills_read"],
+    "meeting-prep": ["crm_lookup", "crm_calendar", "read", "write", "skills_read"],
+    "followup": ["crm_lookup", "crm_propose", "read", "skills_read"]
+  },
+  "alwaysAllow": [],
+  "fetchAllowlist": [
+    "*.sec.gov",
+    "www.lumenfold.test",
+    "www.quillwave.test",
+    "www.harborline.test",
+    "www.tessellate-health.test",
+    "www.ferrowind.test",
+    "www.cindervale.test"
+  ],
+  "redactEnv": ["DATAROOM_API_KEY", "OPENCLAW_GATEWAY_TOKEN"],
+  "auditLog": "/state/vc-guard/tool-calls.jsonl"
+}

@@ -1,0 +1,9 @@
+{
+  "id": "vc-guard",
+  "name": "VC guard",
+  "description": "Defense in depth: per-agent tool allowlist, fetch allowlist, secret redaction and a tool-call audit log.",
+  "categories": ["other"],
+  "contracts": { "agentToolResultMiddleware": ["openclaw"] },
+  "activation": { "onStartup": true },
+  "configSchema": { "type": "object", "additionalProperties": false }
+}

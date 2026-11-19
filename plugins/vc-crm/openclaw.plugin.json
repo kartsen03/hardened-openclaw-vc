@@ -1,0 +1,9 @@
+{
+  "id": "vc-crm",
+  "name": "VC CRM tools",
+  "description": "Read the synthetic CRM and propose changes. Proposals need human approval in the CRM service.",
+  "categories": ["other"],
+  "contracts": { "tools": ["crm_lookup", "crm_calendar", "crm_propose"] },
+  "activation": { "onStartup": true },
+  "configSchema": { "type": "object", "additionalProperties": false }
+}

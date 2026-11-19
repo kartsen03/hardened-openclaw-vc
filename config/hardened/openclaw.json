@@ -1,0 +1,120 @@
+// Hardened OpenClaw 2026.11.5 config for the VC lab. JSON5. Mounted read-only.
+// Every key here was checked against the 2026.11.5 docs; `openclaw config validate` must pass.
+{
+  gateway: {
+    mode: "local",
+    bind: "loopback",              // in a container an unset bind means 0.0.0.0; never leave it unset
+    port: 18789,
+    auth: { mode: "token", token: "${OPENCLAW_GATEWAY_TOKEN}" },
+    tailscale: { mode: "off" },
+    controlUi: { enabled: false },
+  },
+  update: { checkOnStart: false, auto: { enabled: false } },
+  telemetry: { enabled: false },
+  diagnostics: { otel: { enabled: false } },
+
+  // All of OpenClaw's own outbound HTTP (web_fetch, model calls, plugin fetches) goes through
+  // the allowlist proxy. The container has no other route out anyway (internal network).
+  proxy: { proxyUrl: "http://egress-proxy:3128", loopbackMode: "gateway-only" },
+
+  models: {
+    mode: "replace",
+    providers: {
+      ollama: {
+        baseUrl: "http://model-relay:11434",
+        api: "ollama",
+        apiKey: "ollama-local",
+        timeoutSeconds: 600,
+        models: [
+          {
+            id: "${VC_MODEL_ID}",
+            name: "${VC_MODEL_ID}",
+            input: ["text"],
+            contextTokens: 32768,
+            params: { num_ctx: 32768 },
+          },
+        ],
+      },
+    },
+  },
+
+  // One agent per skill, so each skill runs with only the tools it needs.
+  // OpenClaw has no per-skill tool restriction; tool policy is per agent.
+  agents: {
+    ownership: "explicit",
+    defaults: {
+      workspace: "/workspace/vc",
+      model: { primary: "ollama/${VC_MODEL_ID}" },
+      sandbox: { mode: "off" },    // the whole gateway is the sandbox: see compose.hardened.yaml
+      skipBootstrap: true,
+      skills: [],
+      systemAgent: { agentId: "researcher" },
+    },
+    entries: {
+      researcher: {
+        workspace: "/workspace/vc",   // shared: prep reads the researcher's briefs
+        skills: ["company-research"],
+        tools: { allow: ["web_fetch", "read", "write", "skills_read"] },
+      },
+      "meeting-prep": {
+        workspace: "/workspace/vc",   // shared: prep reads the researcher's briefs
+        skills: ["meeting-prep"],
+        tools: { allow: ["crm_lookup", "crm_calendar", "read", "write", "skills_read"] },
+      },
+      followup: {
+        workspace: "/workspace/vc",   // shared: prep reads the researcher's briefs
+        skills: ["followup-tracker"],
+        tools: { allow: ["crm_lookup", "crm_propose", "read", "skills_read"] },
+      },
+    },
+  },
+
+  tools: {
+    // Belt and braces: these never reach any agent, whatever an agent allowlist says.
+    deny: [
+      "group:runtime",      // exec, process, code_execution, secrets
+      "group:automation",   // automations/cron, gateway, plugins, openclaw
+      "group:ui", "group:nodes", "group:messaging", "group:sessions", "group:memory", "group:media",
+      "edit", "apply_patch", "web_search", "x_search", "skill_workshop", "subagents",
+      "sessions_spawn", "sessions_send", "github_publish",
+    ],
+    // Same model-interface setting in both configs: a 7B model calls tools far more reliably
+    // when their definitions are sent up front instead of through Tool Search.
+    toolSearch: { enabled: false },
+    fs: { workspaceOnly: true },
+    exec: { mode: "deny", applyPatch: { workspaceOnly: true } },
+    elevated: { enabled: false },
+    sessions: { visibility: "agent" },
+    agentToAgent: { enabled: false },
+    openclaw: { autoApproveChanges: false },
+    web: {
+      search: { enabled: false },
+      fetch: { enabled: true, maxRedirects: 0, maxChars: 20000, useTrustedEnvProxy: true },
+    },
+  },
+
+  skills: {
+    allowBundled: [],                       // no bundled skills (includes the clawhub installer skill)
+    load: { watch: false },
+    install: { allowUploadedArchives: false },
+    workshop: { autonomous: { mode: "off" } }, // no self-written skills
+  },
+  browser: { enabled: false },
+
+  plugins: {
+    allow: ["ollama", "vc-crm", "vc-guard"],
+    load: { paths: ["/opt/vc/plugins/vc-crm", "/opt/vc/plugins/vc-guard"] },
+    entries: {
+      "vc-crm": { enabled: true },
+      "vc-guard": { enabled: true },
+    },
+    slots: { memory: "none" },
+  },
+
+  logging: {
+    file: "/state/logs/openclaw.log",
+    audit: { enabled: true },
+    // Log redaction covers console, log tails, exports and OTel. Transcripts are handled by vc-guard.
+    redactPatterns: ["cnry_[0-9a-f]{32}", "[0-9a-f]{48}"],
+  },
+}

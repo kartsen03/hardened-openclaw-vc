@@ -1,0 +1,83 @@
+# Baseline lab deployment: OpenClaw defaults, the way the quickstart leaves it.
+#
+# What is NOT hardened here on purpose: writable root filesystem, default capabilities, one
+# agent with every default tool, no proxy, no guard plugin, writable skills folder, and a CRM
+# that applies agent writes without approval.
+#
+# What stays for lab safety only: everything is on an internal network with no route to the
+# internet (only the model relay can reach the host's Ollama). Attacks only target lab hosts,
+# so this does not change what an attack can achieve inside the lab.
+name: vc-default
+
+volumes:
+  oc_state: {}
+
+networks:
+  flatnet:
+    internal: true
+    ipam: { config: [{ subnet: 11.21.0.0/24 }] }
+  egress: {}
+
+services:
+  openclaw:
+    build: { context: ., dockerfile: docker/openclaw/Dockerfile }
+    image: vc-openclaw:2026.11.5
+    ulimits: { core: 0 }   # lab safety only: no crash dumps on the host disk
+    environment:
+      HOME: /state
+      OPENCLAW_STATE_DIR: /state
+      OPENCLAW_CONFIG_PATH: /run/config/openclaw.json
+      VC_CRM_URL: http://crm:8080
+      VC_MODEL_ID: ${VC_MODEL_ID:?set VC_MODEL_ID in .env}
+      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN:?run scripts/make_env.py}
+      DATAROOM_API_KEY: ${DATAROOM_API_KEY:?run scripts/make_env.py}
+    volumes:
+      - oc_state:/state
+      - ./runtime/default/workspace:/workspace/vc
+      - ./runtime/default/openclaw.json:/run/config/openclaw.json
+    networks: [flatnet]
+    depends_on: [crm, model-relay, sites]
+
+  crm:
+    build: { context: ., dockerfile: docker/crm/Dockerfile }
+    image: vc-crm:lab
+    ulimits: { core: 0 }   # lab safety only: no crash dumps on the host disk
+    environment:
+      CRM_REQUIRE_APPROVAL: "0"
+      CRM_STATE_DIR: /data
+      CRM_SEED: /seed/crm_seed.json
+      CRM_ADMIN_TOKEN: ${CRM_ADMIN_TOKEN:?run scripts/make_env.py}
+    volumes: ["./runtime/default/crm:/data"]
+    networks: [flatnet]
+
+  sites:
+    build: { context: ., dockerfile: docker/sites/Dockerfile }
+    image: vc-sites:lab
+    ulimits: { core: 0 }   # lab safety only: no crash dumps on the host disk
+    volumes:
+      - ./docker/sites/www:/www:ro
+      - ./runtime/default/logs:/logs
+    networks:
+      flatnet:
+        aliases:
+          - www.lumenfold.test
+          - www.quillwave.test
+          - www.harborline.test
+          - www.tessellate-health.test
+          - www.ferrowind.test
+          - www.cindervale.test
+          - exfil.attacker.test
+          - collect.attacker.test
+          - paste.attacker.test
+          - skills.attacker.test
+          - registry.clawhub-mirror.test
+          - cdn.dataroom-sync.test
+          - api.founder-portal.test
+
+  model-relay:
+    image: vc-sites:lab
+    ulimits: { core: 0 }   # lab safety only: no crash dumps on the host disk
+    command: ["python", "-I", "relay.py"]
+    environment: { RELAY_UPSTREAM: "${VC_MODEL_UPSTREAM:-host.docker.internal:11435}" }
+    networks: [flatnet, egress]
+    depends_on: [sites]

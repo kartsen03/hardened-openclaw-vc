@@ -1,0 +1,10 @@
+# Approved sources for research skills (Squid dstdomain syntax: leading dot = subdomains too).
+# SEC EDGAR (public filings)
+.sec.gov
+# Synthetic company sites (fictional, lab only)
+www.lumenfold.test
+www.quillwave.test
+www.harborline.test
+www.tessellate-health.test
+www.ferrowind.test
+www.cindervale.test

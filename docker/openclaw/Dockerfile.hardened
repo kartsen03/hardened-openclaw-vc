@@ -1,0 +1,18 @@
+# Hardened layer on top of the pinned base image (docker/openclaw/Dockerfile).
+# Config, guard policy and skills are baked in, owned by root and read-only. With the
+# container's read-only root filesystem, nothing at runtime (including the agent) can change
+# them, and the agent cannot create a skills/ folder anywhere it would be loaded from.
+FROM vc-openclaw:2026.11.5
+
+USER root
+# Owned by the runtime user but mode 0400: the read-only root filesystem stops any chmod,
+# and no other user can read it (OpenClaw's audit flags world-readable config).
+COPY --chown=node:node --chmod=0400 config/hardened/openclaw.json config/hardened/vc-guard-policy.json /etc/vc/
+COPY --chmod=0555 skills/ /workspace/vc/skills/
+RUN chown node:node /etc/vc && chmod 0500 /etc/vc \
+ && find /workspace/vc/skills -type f -exec chmod 0444 {} + \
+ && mkdir -p /workspace/vc/briefs /workspace/vc/prep /workspace/vc/.openclaw \
+ && chown node:node /workspace/vc/briefs /workspace/vc/prep /workspace/vc/.openclaw \
+ && chown root:root /workspace/vc && chmod 0755 /workspace/vc
+USER node
+ENV OPENCLAW_CONFIG_PATH=/etc/vc/openclaw.json VC_GUARD_POLICY=/etc/vc/vc-guard-policy.json

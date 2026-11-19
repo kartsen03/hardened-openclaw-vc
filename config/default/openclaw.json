@@ -1,0 +1,48 @@
+// Baseline: OpenClaw 2026.11.5 with defaults, as a team might run it after the quickstart.
+// Only what is needed to run at all is set: the model, the gateway token, the CRM tool plugin
+// and the workspace with the same three skills. No tool policy, no proxy, no guard plugin.
+// It still runs inside a throwaway lab container with no internet (compose.default.yaml),
+// so attacks can only reach lab hosts.
+{
+  gateway: {
+    mode: "local",
+    bind: "loopback",
+    port: 18789,
+    auth: { mode: "token", token: "${OPENCLAW_GATEWAY_TOKEN}" },
+  },
+  update: { checkOnStart: false },
+  models: {
+    providers: {
+      ollama: {
+        baseUrl: "http://model-relay:11434",
+        api: "ollama",
+        apiKey: "ollama-local",
+        timeoutSeconds: 600,
+        models: [
+          {
+            id: "${VC_MODEL_ID}",
+            name: "${VC_MODEL_ID}",
+            input: ["text"],
+            contextTokens: 32768,
+            params: { num_ctx: 32768 },
+          },
+        ],
+      },
+    },
+  },
+  agents: {
+    defaults: {
+      workspace: "/workspace/vc",
+      model: { primary: "ollama/${VC_MODEL_ID}" },
+      skipBootstrap: true,
+    },
+    entries: { main: {} },
+  },
+  // Model-interface setting shared with the hardened config (not a security control):
+  // tool definitions up front, because the 7B model fails to drive Tool Search.
+  tools: { toolSearch: { enabled: false } },
+  plugins: {
+    load: { paths: ["/opt/vc/plugins/vc-crm"] },
+    entries: { "vc-crm": { enabled: true } },
+  },
+}
