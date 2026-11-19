@@ -1,0 +1,74 @@
+{
+ "split": "heldout",
+ "n": 174,
+ "dataset_revision": "5cff435ddab2cc34261875885de9ac50d40393ec",
+ "threshold": 3,
+ "vetter": {
+  "tp": 58,
+  "fp": 1,
+  "fn": 4,
+  "tn": 111,
+  "precision": 0.9831,
+  "recall": 0.9355
+ },
+ "card_ioc_baseline": {
+  "tp": 62,
+  "fp": 0,
+  "fn": 0,
+  "tn": 112,
+  "precision": 1.0,
+  "recall": 1.0
+ },
+ "errors": [
+  {
+   "id": "4e7dd1508877",
+   "skill_name": "n8nsk",
+   "label": "malicious",
+   "score": 0,
+   "kind": "false_negative",
+   "findings": []
+  },
+  {
+   "id": "4829d6a892b2",
+   "skill_name": "airbnb",
+   "label": "malicious",
+   "score": 0,
+   "kind": "false_negative",
+   "findings": []
+  },
+  {
+   "id": "5bb8132d2874",
+   "skill_name": "copywritings",
+   "label": "malicious",
+   "score": 0,
+   "kind": "false_negative",
+   "findings": []
+  },
+  {
+   "id": "07fc1e496ca3",
+   "skill_name": "shield",
+   "label": "malicious",
+   "score": 0,
+   "kind": "false_negative",
+   "findings": []
+  },
+  {
+   "id": "bb1959b87000",
+   "skill_name": "openssl-operations",
+   "label": "benign",
+   "score": 3,
+   "kind": "false_positive",
+   "findings": [
+    {
+     "rule": "archive_password",
+     "w": 3,
+     "line": 117,
+     "excerpt": "openssl req -x509`, you must also pass `"
+    }
+   ]
+  }
+ ],
+ "commit": "3af066a",
+ "vetter_dir_dirty": false,
+ "ran_at": "2026-11-19T01:32:33Z"
+}
