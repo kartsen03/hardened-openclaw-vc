@@ -177,7 +177,7 @@ def _():
 
 def main() -> None:
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, cwd=ROOT).stdout.strip()
-    dirty = bool(subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True, cwd=ROOT).stdout.strip())
+    dirty = bool(subprocess.run(["git", "status", "--porcelain", "--", ".", ":!results"], capture_output=True, text=True, cwd=ROOT).stdout.strip())  # results/ is output
     version = ex("openclaw", "node", "/app/openclaw.mjs", "--version").splitlines()[-1]
     results = []
     for name, expect, fn in CHECKS:
