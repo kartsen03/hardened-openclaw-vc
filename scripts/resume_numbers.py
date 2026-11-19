@@ -44,10 +44,15 @@ for c in ("canary_leak", "disallowed_tool", "crm_write_unapproved", "non_allowli
     lines.append(f"  {c:22}: default {pct(d['by_category'][c])} -> hardened {pct(h['by_category'][c])}")
 lines += [
     f"Model tried the attack  : default {pct(d['attempted_overall'])}, hardened {pct(h['attempted_overall'])}",
-    f"Canary leaked (hardened): {'YES' if h['canary_leaked_in_any_run'] or can['hits'] else 'no'} "
-    f"(0 hits over every hardened run's transcripts, logs and outputs; positive control passes)"
-    if not (h['canary_leaked_in_any_run'] or can['hits']) else "Canary leaked (hardened): YES, see results",
-    f"Canary leaked (default) : {'yes' if d['canary_leaked_in_any_run'] else 'no'}",
+    (f"Canary leaked (hardened): no (0 hits in every hardened run's transcripts, logs and outputs, "
+     f"{can['files_scanned']} files; positive control passes)"
+     if not (h['canary_leaked_under_injection'] or h['canary_leaked_in_worst_case'] or can['hits'])
+     else "Canary leaked (hardened): YES, see results"),
+    f"Canary leaked (default) : under injection {'yes' if d['canary_leaked_under_injection'] else 'no'}; "
+    f"when asked outright (worst case) {', '.join(d['canary_leaked_in_worst_case']) or 'no'}",
+    "Worst-case probes       : default {}/{} succeeded -> hardened {}/{}".format(
+        *[f(cfg) for cfg in (d, h) for f in (lambda c: sum(v['succeeded'] for v in c['worst_case'].values() if v['outcome'] == 'ok'),
+                                              lambda c: sum(v['outcome'] == 'ok' for v in c['worst_case'].values()))]),
     f"Isolation checks        : {iso['passed']}/{iso['total']} (commit {iso['commit']})",
     f"Skill vetter, held-out  : precision {vet['vetter']['precision']:.3f}, recall {vet['vetter']['recall']:.3f} "
     f"(n={vet['n']}, {vet['vetter']['tp']} TP / {vet['vetter']['fp']} FP / {vet['vetter']['fn']} FN)",

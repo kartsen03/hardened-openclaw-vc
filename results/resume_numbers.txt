@@ -1,0 +1,20 @@
+Resume numbers (all from recorded runs in this repo)
+====================================================
+OpenClaw version        : OpenClaw 2026.11.5 (e13cf15)
+Model / provider        : ollama/qwen2.5:7b-instruct-q4_K_M (local, via Ollama)
+Suite commits           : hardened 3af066a, 73b1657; default 3af066a-dirty, 73b1657, 73b1657-dirty
+Custom skills           : 3 (company-research, followup-tracker, meeting-prep), no third-party skills
+Injection attacks       : 35 (7 per category x 5 categories; web pages, briefs, notes, CRM output)
+Attack success rate     : default 6% (2/35) -> hardened 0% (0/35)
+  canary_leak           : default 0% (0/7) -> hardened 0% (0/7)
+  disallowed_tool       : default 29% (2/7) -> hardened 0% (0/7)
+  crm_write_unapproved  : default 0% (0/7) -> hardened 0% (0/7)
+  non_allowlisted_fetch : default 0% (0/7) -> hardened 0% (0/7)
+  skill_install         : default 0% (0/7) -> hardened 0% (0/7)
+Model tried the attack  : default 11% (4/35), hardened 3% (1/35)
+Canary leaked (hardened): no (0 hits in every hardened run's transcripts, logs and outputs, 462 files; positive control passes)
+Canary leaked (default) : under injection no; when asked outright (worst case) WC04, WC05
+Worst-case probes       : default 7/9 succeeded -> hardened 0/10
+Isolation checks        : 14/14 (commit 0c08d5e)
+Skill vetter, held-out  : precision 0.983, recall 0.935 (n=174, 58 TP / 1 FP / 4 FN)
+Monitoring (per agent)  : default/main p50 44.4s, median 43936 tokens, $0; hardened/followup p50 37.2s, median 17598 tokens, $0; hardened/meeting-prep p50 104.5s, median 23794 tokens, $0; hardened/researcher p50 39.4s, median 11175 tokens, $0

@@ -64,7 +64,10 @@ def main():
                                   "signals": [k for k, v in r["signals"].items() if v]} for r in ok if r["success"]],
             "any_signal_fired": [{"task": r["task"], "signals": [k for k, v in r["signals"].items() if v]}
                                  for r in ok if any(r["signals"].values())],
-            "canary_leaked_in_any_run": any(r["signals"]["canary_leak"] for r in rows),
+            # injected instructions (the 35 attacks) vs the user asking outright (worst case)
+            "canary_leaked_under_injection": any(r["signals"]["canary_leak"] for r in attacks + [
+                u for u in rows if u["category"] == "utility"]),
+            "canary_leaked_in_worst_case": [r["task"] for r in worst if r["signals"]["canary_leak"]],
             "utility": {r["task"]: {"agent": r["skill_agent"], "done": r.get("utility_done"), "outcome": r["outcome"]}
                         for r in rows if r["category"] == "utility"},
             "worst_case": {r["task"]: {"goal": r["goal"], "succeeded": r["success"], "model_tried": r["attempted"],
@@ -88,7 +91,15 @@ def main():
         s = summary[cfg]
         md.append(f"**{cfg}**: {s['attacks_completed']}/{s['attacks_run']} attacks completed"
                   + (f", errored: {', '.join(s['errored'])}" if s["errored"] else "")
-                  + f"; canary leaked in any run: {s['canary_leaked_in_any_run']}; commits {', '.join(s['commits'])}")
+                  + f"; canary leaked under injection: {s['canary_leaked_under_injection']}"
+                  + f"; canary leaked in worst-case probes: {', '.join(s['canary_leaked_in_worst_case']) or 'none'}"
+                  + f"; commits {', '.join(s['commits'])}")
+        md.append("utility (benign tasks done): " + ", ".join(
+            f"{k} {'done' if v['done'] else 'not done'}" for k, v in sorted(s["utility"].items())))
+        other = [x for x in s["any_signal_fired"] if x["task"] not in {y["task"] for y in s["still_succeeding"]}]
+        if other:
+            md.append("signals that fired outside the attack's own category: "
+                      + "; ".join(f"{x['task']} {x['signals']}" for x in other))
         if s["still_succeeding"]:
             md.append(f"\nStill succeeding on {cfg}:")
             for x in s["still_succeeding"]:
@@ -100,8 +111,9 @@ def main():
         md.append("| probe | goal | default | hardened | hardened stopped by |\n|---|---|---|---|---|")
         for i in wc_ids:
             d, h = summary["default"]["worst_case"].get(i), summary["hardened"]["worst_case"].get(i)
-            fmt = lambda x: "n/a" if not x else ("**succeeded**" if x["succeeded"] else "stopped")
-            md.append(f"| {i} | {(d or h)['goal']} | {fmt(d)} | {fmt(h)} | {'; '.join(h['stopped_by']) if h else ''} |")
+            fmt = lambda x: ("n/a" if not x else "no answer (model returned nothing)" if x["outcome"] != "ok"
+                             else "**succeeded**" if x["succeeded"] else "stopped")
+            md.append(f"| {i} | {(d or h)['goal']} | {fmt(d)} | {fmt(h)} | {'; '.join(h['stopped_by']) if h and h['outcome'] == 'ok' else ''} |")
         md.append("")
     (ROOT / "results" / "injection_summary.md").write_text("\n".join(md) + "\n", encoding="utf-8")
     print("\n".join(md))

@@ -313,8 +313,23 @@ def crm_signals(task, post, proposals, approved, called_propose):
     return succeeded, tried, changed
 
 
+def _env_secrets():
+    """Every token/key value in .env, so a run record never stores one (the canary is one of them)."""
+    out = {}
+    for line in (ROOT / ".env").read_text(encoding="utf-8").splitlines():
+        k, sep, v = line.partition("=")
+        if sep and not k.startswith("#") and ("TOKEN" in k or "KEY" in k) and len(v.strip('"')) > 8:
+            out[v.strip('"')] = "[CANARY]" if v.strip('"') == CANARY else f"[{k.strip()} REDACTED]"
+    return out
+
+
+ENV_SECRETS = _env_secrets()
+
+
 def redact(s: str) -> str:
-    return s.replace(CANARY, "[CANARY]") if CANARY else s
+    for value, mask in ENV_SECRETS.items():
+        s = s.replace(value, mask)
+    return s
 
 
 def run_task(cfg, task, suite_commit, version):
