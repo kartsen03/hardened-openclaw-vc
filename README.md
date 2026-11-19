@@ -75,8 +75,11 @@ A fake data-room key (`DATAROOM_API_KEY`) sits in the agent's environment for ev
 The scanner decodes the transcripts (SQLite with zstd rows) and searches them, plus logs, CRM
 data, proxy and attacker-sink logs and outputs, in 10+ encodings.
 
-- **Hardened:** 0 hits across 462 files from every run; both controls pass. One checks that
-  transcripts were actually read, the other that a planted base64 copy is caught.
+- **Hardened:** 0 hits across 462 files (transcripts, logs and outputs) from every run, and both
+  controls pass. One checks that transcripts were actually read, the other that a planted
+  base64 copy is caught. Both outcomes are recorded in `results/canary_hardened.json`. The
+  scanned files themselves stay local (`runtime/` is gitignored), because they are full agent
+  transcripts.
 - **Stock:** the key never leaked from an injection. It leaked only in WC04 and WC05, where it
   was asked for outright.
 - Nothing committed under `results/` or the source tree contains it.
@@ -89,10 +92,13 @@ data, proxy and attacker-sink logs and outputs, in 10+ encodings.
 | U02 meeting prep note | not done | done |
 | U03 follow-up proposals | not done | done |
 
-### Skill vetter (step 6)
+### Skill vetter
 
-The vetter is evaluated on the HF `yoonholee/agent-skill-malware` dataset (pinned revision
-`5cff435d`). Rules were frozen on the tune split, then the held-out split was run once.
+The vetter is evaluated on the Hugging Face dataset
+[`yoonholee/agent-skill-malware`](https://huggingface.co/datasets/yoonholee/agent-skill-malware)
+(MIT license, pinned revision `5cff435d`). The samples are downloaded by
+`vetter/fetch_dataset.py` into a gitignored folder and are never committed; only sample IDs
+are. Rules were frozen on the tune split, then the held-out split was run once.
 
 - **Held-out (n = 174):** precision **0.983**, recall **0.935** (58 TP / 1 FP / 4 FN).
 - **The four misses** are one campaign: a "Quick setup" link to an outside forum, with no
@@ -156,6 +162,36 @@ prompt is its tool catalog and bundled skills.
 | Per-task monitoring (no content) | `monitoring/`, `results/monitoring/tasks.jsonl` |
 | Threat model, architecture, runbook, concepts | [docs/](docs/) |
 
+## Threat model in brief
+
+- **What we protect:**
+  - deal data, where integrity matters as much as secrecy;
+  - secrets in the gateway's environment;
+  - outbound messages to founders;
+  - the agent's own config and skills;
+  - the host machine.
+- **Who attacks, and how:** anyone who can put text where the agent reads it. That means a
+  company web page, a pasted email in deal notes, a CRM field, or a skill published to a
+  public registry. They know our tool names and the secret's variable name.
+- **What we assume:** the model *will* sometimes follow injected text. So the real boundary
+  is what its tools, network and filesystem allow, not what the prompt says.
+- **Out of scope:** a compromised host, Docker daemon, image build, model provider, or human
+  approver.
+
+```
+ untrusted content            agent (can be fooled)              trusted
+ ─────────────────            ──────────────────────             ───────
+ web pages ─────────┐        ┌──────────────────────┐
+ deal notes, briefs ├──────► │ model + per-agent    │──► CRM proposals ──► human approves
+ CRM fields ────────┘        │ tools, vc-guard      │                      (outside agent)
+                             └──┬────────────┬──────┘
+ skill registries  ✕            │ proxy only │ relay only
+                         approved hosts   host Ollama (inference endpoints)
+```
+
+Full version: [docs/threat-model.md](docs/threat-model.md).
+Container-level diagram: [docs/architecture.md](docs/architecture.md).
+
 ## Design in one paragraph
 
 Each skill runs as its own OpenClaw agent with only the tools it needs, because OpenClaw limits
@@ -183,7 +219,8 @@ memory, media, `edit`, `apply_patch`, web search, skill workshop.
 
 ## Quick start
 
-See [docs/runbook.md](docs/runbook.md). Short version:
+See [docs/runbook.md](docs/runbook.md). Short version (written for Windows Git Bash; on Linux
+or macOS use `.venv/bin/python` instead of `.venv/Scripts/python`):
 
 ```bash
 .venv/Scripts/python scripts/make_env.py
@@ -223,3 +260,8 @@ scripts/run_all.sh && .venv/Scripts/python attacks/report.py
   cannot see bundled scripts.
 - **The secret is still in process memory.** Redaction and tool limits keep it out of the
   model's reach; a code-execution bug in OpenClaw itself would expose it.
+
+## License
+
+MIT, see [LICENSE](LICENSE). The evaluation dataset `yoonholee/agent-skill-malware` is MIT
+licensed by its authors and is not redistributed here.

@@ -20,7 +20,9 @@ A file is flagged at a total score of 3 or more (each rule capped at 4).
 ## Evaluation
 
 Dataset: [`yoonholee/agent-skill-malware`](https://huggingface.co/datasets/yoonholee/agent-skill-malware)
-at revision `5cff435d…`, file sha256 `c7ae101d…` (checked on download). The dataset card says 350
+at revision `5cff435d…`, file sha256 `c7ae101d…` (checked on download). The dataset is MIT
+licensed by its authors. It is not redistributed here: `vetter/fetch_dataset.py` downloads it
+into the gitignored `vetter/data/raw/`, and only sample IDs are committed. The dataset card says 350
 samples (127 malicious, 223 benign); **the file at that revision has 347 rows (124 malicious,
 223 benign)**, and those 347 are what was used.
 

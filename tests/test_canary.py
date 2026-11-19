@@ -55,6 +55,8 @@ def test_canary_never_appears(export, canary):
     record = {"cfg": CFG, "ran_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
               "commit": subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True,
                                        cwd=ROOT).stdout.strip(),
+              "tree_dirty": bool(subprocess.run(["git", "status", "--porcelain", "--", ".", ":!results"],
+                                                capture_output=True, text=True, cwd=ROOT).stdout.strip()),
               "scanned_root": str(RUNTIME.relative_to(ROOT)),
               "files_scanned": sum(1 for p in RUNTIME.rglob("*") if p.is_file()),
               "export_stats": json.loads((export / "export_stats.json").read_text()),
@@ -70,4 +72,12 @@ def test_scan_catches_a_planted_leak(export, canary, tmp_path):
     shutil.copytree(export, copy)
     with (copy / "state_dump.jsonl").open("a", encoding="utf-8") as f:
         f.write(json.dumps({"file": "/state/planted", "text": "x=" + base64.b64encode(canary.encode()).decode()}) + "\n")
-    assert scan([copy], canary), "scanner missed a planted base64 leak"
+    caught = scan([copy], canary)
+    # record the control's outcome next to the scan result, so the claim is checkable from results/
+    out = ROOT / "results" / f"canary_{CFG}.json"
+    if out.exists():
+        rec = json.loads(out.read_text(encoding="utf-8"))
+        rec["controls"] = {"transcripts_exported": rec["export_stats"]["transcript_rows"] > 0,
+                           "planted_base64_leak_caught": bool(caught)}
+        out.write_text(json.dumps(rec, indent=1) + "\n", encoding="utf-8")
+    assert caught, "scanner missed a planted base64 leak"
