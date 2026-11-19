@@ -36,6 +36,7 @@ case "$CMD" in
     rm -rf "runtime/$CFG"
     mkdir -p "runtime/$CFG"/{logs,crm}
     [ "$CFG" = hardened ] && mkdir -p runtime/hardened/{briefs,prep} || prepare_default
+    mkdir -p "runtime/fixtures/$CFG/www-overlay"
     echo "reset $CFG" ;;
   oc) "${DC[@]}" exec -T openclaw node /app/openclaw.mjs "$@" ;;
   logs) "${DC[@]}" logs --no-log-prefix "${1:-openclaw}" ;;

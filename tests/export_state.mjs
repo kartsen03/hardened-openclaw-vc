@@ -5,13 +5,22 @@
 //   are zstd frames, else base64.
 // * Other files: UTF-8 text (binary files as base64).
 // Lines: {"file": ..., "table"?: ..., "row"?: n, "text": ...}
+//
+// Runs in a throwaway, memory-capped container (tests/collect_artifacts.py), never in the
+// gateway. Symlinks are skipped (a loop would walk forever) and output is written
+// synchronously, so memory stays flat however large the dump is.
 import { DatabaseSync } from "node:sqlite";
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { lstatSync, readdirSync, readFileSync, writeSync } from "node:fs";
 import { join } from "node:path";
 import zlib from "node:zlib";
 
-const ROOT = process.argv[2] || "/state";
-const out = (o) => process.stdout.write(JSON.stringify(o) + "\n");
+const ROOT = process.argv[process.argv.length - 1].startsWith("/") ? process.argv[process.argv.length - 1] : "/state";
+const out = (o) => {
+  const s = JSON.stringify(o) + "\n";
+  let buf = Buffer.from(s);
+  while (buf.length) buf = buf.subarray(writeSync(1, buf));
+};
+const MAX_DEPTH = 20;
 const ZSTD_MAGIC = Buffer.from([0x28, 0xb5, 0x2f, 0xfd]);
 
 function decodeBlob(buf) {
@@ -47,12 +56,16 @@ function dumpSqlite(file) {
   db.close();
 }
 
-function walk(dir) {
-  for (const name of readdirSync(dir)) {
+function walk(dir, depth = 0) {
+  if (depth > MAX_DEPTH) return;
+  let names;
+  try { names = readdirSync(dir); } catch { return; }
+  for (const name of names) {
     const p = join(dir, name);
     let st;
-    try { st = statSync(p); } catch { continue; }
-    if (st.isDirectory()) { walk(p); continue; }
+    try { st = lstatSync(p); } catch { continue; }
+    if (st.isSymbolicLink()) { out({ file: p, symlink: true }); continue; }
+    if (st.isDirectory()) { walk(p, depth + 1); continue; }
     if (!st.isFile() || st.size > 50 * 1024 * 1024) continue;
     if (/\.sqlite$/.test(name)) { dumpSqlite(p); continue; }
     if (/\.sqlite-(wal|shm|journal)$/.test(name)) continue; // read through the database itself

@@ -95,6 +95,7 @@ services:
     image: vc-sites:lab
     volumes:
       - ./docker/sites/www:/www:ro
+      - ./runtime/fixtures/hardened/www-overlay:/www-overlay:ro
       - ./runtime/hardened/logs:/logs
     networks:
       labnet:

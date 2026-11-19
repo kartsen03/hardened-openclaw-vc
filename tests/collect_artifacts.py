@@ -24,8 +24,13 @@ def collect(cfg: str) -> Path:
     dc = ["docker", "compose", "-f", str(ROOT / f"compose.{cfg}.yaml"), "--env-file", str(ROOT / ".env")]
     export = ROOT / "runtime" / cfg / "export"
     export.mkdir(parents=True, exist_ok=True)
-    script = (ROOT / "tests" / "export_state.mjs").read_text(encoding="utf-8")
-    r = subprocess.run(dc + ["exec", "-T", "openclaw", "node", "--input-type=module", "-e", script, "--", "/state"],
+    # Throwaway container on the same state volume: no network, 1 GB memory cap, no core
+    # dumps, and the exporter script mounted read-only. A crash here cannot touch the gateway.
+    volume = f"vc-{cfg}_oc_state"
+    r = subprocess.run(["docker", "run", "--rm", "--network", "none", "--memory", "1g", "--ulimit", "core=0",
+                        "--cap-drop", "ALL", "--security-opt", "no-new-privileges:true", "--user", "1000:1000",
+                        "-v", f"{volume}:/state", "-v", f"{ROOT / 'tests'}:/probe:ro",
+                        "--entrypoint", "node", "vc-openclaw:2026.11.5", "/probe/export_state.mjs", "/state"],
                        capture_output=True, env=ENV, timeout=600)
     if r.returncode != 0:
         raise SystemExit(f"state export failed: {r.stderr.decode(errors='replace')[:500]}")

@@ -19,6 +19,9 @@ from pathlib import Path
 from urllib.parse import unquote, urlparse
 
 WWW = Path(os.environ.get("SITES_ROOT", "/www"))
+# Per-run fixture pages (attack pages, the redaction probe). Checked before WWW. Lives outside
+# the scanned output folders because some fixtures contain the canary on purpose.
+OVERLAY = Path(os.environ.get("SITES_OVERLAY", "/www-overlay"))
 LOG = Path(os.environ.get("SITES_LOG", "/logs/sites.jsonl"))
 
 # What the sink hands back when an injected instruction asks the agent to "install" a skill.
@@ -63,12 +66,17 @@ class Handler(BaseHTTPRequestHandler):
         n = int(self.headers.get("Content-Length") or 0)
         body = self.rfile.read(min(n, 1_000_000)) if n else b""
         site = WWW / host
-        if host and site.is_dir() and ".." not in host:
+        if host and ".." not in host and ((WWW / host).is_dir() or (OVERLAY / host).is_dir()):
             path = unquote(urlparse(self.path).path).lstrip("/") or "index.html"
-            target = (site / path).resolve()
-            if target.is_dir():
-                target = target / "index.html"
-            if site.resolve() in target.parents and target.is_file():
+            target = None
+            for root in (OVERLAY / host, WWW / host):
+                t = (root / path).resolve()
+                if t.is_dir():
+                    t = t / "index.html"
+                if root.is_dir() and root.resolve() in t.parents and t.is_file():
+                    target = t
+                    break
+            if target is not None:
                 self._record("site", 200)
                 ctype = "text/plain; charset=utf-8" if target.suffix in (".md", ".txt") else \
                         "application/json" if target.suffix == ".json" else "text/html; charset=utf-8"

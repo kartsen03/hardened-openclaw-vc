@@ -56,6 +56,7 @@ services:
     ulimits: { core: 0 }   # lab safety only: no crash dumps on the host disk
     volumes:
       - ./docker/sites/www:/www:ro
+      - ./runtime/fixtures/default/www-overlay:/www-overlay:ro
       - ./runtime/default/logs:/logs
     networks:
       flatnet:
